@@ -1,61 +1,60 @@
 {
-module Tokens where
+module Lexer where
 }
 
 %wrapper "basic"
 
+$white = [\ ]
 $digit = 0-9
 $alpha = [a-zA-Z]
-$whiteSpace = [\ ]
+
 
 tokens :-
-  $whiteSpace+                  ;
-  \t+                           ;
-  [\n \;]+                      { \s -> TokenNewLine}
-  var                           { \s -> TokenVar }
-  if                            { \s -> TokenIf }
-  else                          { \s -> TokenElse }
-  endif                         { \s -> TokenEndIf}
-  while                         { \s -> TokenWhile}
-  endwhile                      { \s -> TokenEndWhile}
-  print                         { \s -> TokenPrint}
-  \<                            { \s -> TokenLess }
-  \>                            { \s -> TokenGreater }
-  \<=                           { \s -> TokenLessEqual }
-  \>=                           { \s -> TokenGreaterEqual }
-  \=                            { \s -> TokenAssign }
-  \+                            { \s -> TokenPlus }
-  \-                            { \s -> TokenMinus }
-  \*                            { \s -> TokenMultiply }
-  \/                            { \s -> TokenDivide }
-  $digit+                       { \s -> TokenInt (read s) }
-  $alpha [$alpha $digit \_ \']* { \s -> TokenSym s }
+    $white+                  ;
+    \t+                           ;
+    [\n \;]+                      { \s -> TokenNewLine}
+    int                          { \s -> TokenIntType }
+    if                            { \s -> TokenIf }
+    else                          { \s -> TokenElse }
+    while                         { \s -> TokenWhile}
+    Write                         { \s -> TokenWrite}
+    ReadLn                         { \s -> TokenReadLn}
+    WriteLn                         { \s -> TokenWriteLn}
+    "<"                            { \s -> TokenLess }
+    "="                            { \s -> TokenAssign }
+    "=="                            { \s -> TokenCompare }
+    "+"                            { \s -> TokenPlus }
+    "-"                            { \s -> TokenMinus }
+    "{"                            { \s -> TokenOpenBracket }
+    "}"                            { \s -> TokenCloseBracket }
+    "("                            { \s -> TokenOpenParenthesis }
+    ")"                            { \s -> TokenCloseParenthesis }
+    $digit+                       { \s -> TokenInt (read s) }
+    $alpha [$alpha $digit \_ \']* { \s -> TokenSym s }
 
 {
 
 -- The token type:
 data Token = TokenVar
+           | TokenIntType
            | TokenInt Int
            | TokenSym String
            | TokenAssign
            | TokenPlus
            | TokenMinus
-           | TokenMultiply
-           | TokenDivide
            | TokenNewLine
-           | SpaceToken String
-           | TokenOr
-           | TokenAnd
-           | TokenLess
-           | TokenGreater
-           | TokenLessEqual
-           | TokenGreaterEqual
            | TokenIf
            | TokenElse
-           | TokenEndIf
            | TokenWhile
-           | TokenEndWhile
-           | TokenPrint
+           | TokenWrite
+           | TokenReadLn
+           | TokenWriteLn
+           | TokenLess
+           | TokenCompare
+           | TokenOpenBracket
+           | TokenCloseBracket
+           | TokenOpenParenthesis
+           | TokenCloseParenthesis
            deriving (Eq,Show)
 
 scanTokens = alexScanTokens
